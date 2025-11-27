@@ -265,6 +265,9 @@ def get_latent_mask(
 ) -> np.ndarray:
     latent_size = base_chunk_size * chunk_compress_factor
     latent_lengths = (wav_lengths + latent_size - 1) // latent_size
+    # Ensure minimum latent length of 1 to prevent words from being skipped
+    # when duration prediction is very short
+    latent_lengths = np.maximum(latent_lengths, 1)
     latent_mask = length_to_mask(latent_lengths)
     return latent_mask
 

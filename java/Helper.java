@@ -807,7 +807,9 @@ public class Helper {
         long[] latentLengths = new long[wavLengths.length];
         long maxLen = 0;
         for (int i = 0; i < wavLengths.length; i++) {
-            latentLengths[i] = (wavLengths[i] + latentSize - 1) / latentSize;
+            // Ensure minimum latent length of 1 to prevent words from being skipped
+            // when duration prediction is very short
+            latentLengths[i] = Math.max((wavLengths[i] + latentSize - 1) / latentSize, 1L);
             maxLen = Math.max(maxLen, latentLengths[i]);
         }
         

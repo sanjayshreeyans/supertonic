@@ -260,9 +260,11 @@ pub fn sample_noisy_latent(
         }
     }
 
+    // Ensure minimum latent length of 1 to prevent words from being skipped
+    // when duration prediction is very short
     let latent_lengths: Vec<usize> = wav_lengths
         .iter()
-        .map(|&len| (len + chunk_size - 1) / chunk_size)
+        .map(|&len| ((len + chunk_size - 1) / chunk_size).max(1))
         .collect();
 
     let latent_mask = length_to_mask(&latent_lengths, Some(latent_len));

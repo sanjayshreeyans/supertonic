@@ -496,7 +496,9 @@ namespace Supertonic
         public static float[][][] GetLatentMask(long[] wavLengths, int baseChunkSize, int chunkCompressFactor)
         {
             int latentSize = baseChunkSize * chunkCompressFactor;
-            var latentLengths = wavLengths.Select(len => (len + latentSize - 1) / latentSize).ToArray();
+            // Ensure minimum latent length of 1 to prevent words from being skipped
+            // when duration prediction is very short
+            var latentLengths = wavLengths.Select(len => Math.Max((len + latentSize - 1) / latentSize, 1L)).ToArray();
             return LengthToMask(latentLengths);
         }
 

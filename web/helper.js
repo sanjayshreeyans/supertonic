@@ -316,7 +316,9 @@ export class TextToSpeech {
             xt.push(batch);
         }
         
-        const latentLengths = wavLengths.map(len => Math.floor((len + chunkSize - 1) / chunkSize));
+        // Ensure minimum latent length of 1 to prevent words from being skipped
+        // when duration prediction is very short
+        const latentLengths = wavLengths.map(len => Math.max(1, Math.floor((len + chunkSize - 1) / chunkSize)));
         const latentMask = this.lengthToMask(latentLengths, latentLen);
         
         // Apply mask

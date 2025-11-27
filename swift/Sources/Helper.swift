@@ -234,7 +234,10 @@ func sampleNoisyLatent(duration: [Float], sampleRate: Int, baseChunkSize: Int, c
     
     var latentLengths = [Int]()
     for len in wavLengths {
-        latentLengths.append((len + chunkSize - 1) / chunkSize)
+        // Ensure minimum latent length of 1 to prevent words from being skipped
+        // when duration prediction is very short
+        let latentLen = max(1, (len + chunkSize - 1) / chunkSize)
+        latentLengths.append(latentLen)
     }
     
     let latentMask = lengthToMask(latentLengths, maxLen: latentLen)
@@ -258,7 +261,10 @@ func getLatentMask(_ wavLengths: [Int64], _ cfgs: Config) -> [[[Float]]] {
     
     var latentLengths = [Int]()
     for len in wavLengths {
-        latentLengths.append((Int(len) + latentSize - 1) / latentSize)
+        // Ensure minimum latent length of 1 to prevent words from being skipped
+        // when duration prediction is very short
+        let latentLen = max(1, (Int(len) + latentSize - 1) / latentSize)
+        latentLengths.append(latentLen)
     }
     
     let maxLen = latentLengths.max() ?? 0

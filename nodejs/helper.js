@@ -318,8 +318,10 @@ function lengthToMask(lengths, maxLen = null) {
  */
 function getLatentMask(wavLengths, baseChunkSize, chunkCompressFactor) {
     const latentSize = baseChunkSize * chunkCompressFactor;
+    // Ensure minimum latent length of 1 to prevent words from being skipped
+    // when duration prediction is very short
     const latentLengths = wavLengths.map(len => 
-        Math.floor((len + latentSize - 1) / latentSize)
+        Math.max(1, Math.floor((len + latentSize - 1) / latentSize))
     );
     return lengthToMask(latentLengths);
 }

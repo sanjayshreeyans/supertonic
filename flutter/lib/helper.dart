@@ -241,8 +241,10 @@ class TextToSpeech {
 
   List<List<List<double>>> _getLatentMask(List<int> wavLengths) {
     final latentSize = baseChunkSize * chunkCompressFactor;
+    // Ensure minimum latent length of 1 to prevent words from being skipped
+    // when duration prediction is very short
     final latentLengths = wavLengths
-        .map((len) => ((len + latentSize - 1) / latentSize).floor())
+        .map((len) => (((len + latentSize - 1) / latentSize).floor()).clamp(1, double.maxFinite).toInt())
         .toList();
     final maxLen = latentLengths.reduce(math.max);
     return latentLengths

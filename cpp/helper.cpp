@@ -606,7 +606,10 @@ std::vector<std::vector<std::vector<float>>> getLatentMask(
     int latent_size = base_chunk_size * chunk_compress_factor;
     std::vector<int64_t> latent_lengths;
     for (auto len : wav_lengths) {
-        latent_lengths.push_back((len + latent_size - 1) / latent_size);
+        // Ensure minimum latent length of 1 to prevent words from being skipped
+        // when duration prediction is very short
+        int64_t latent_len = (len + latent_size - 1) / latent_size;
+        latent_lengths.push_back(std::max(latent_len, 1LL));
     }
     return lengthToMask(latent_lengths);
 }

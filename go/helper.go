@@ -452,7 +452,12 @@ func getLatentMask(wavLengths []int64, cfg Config) [][][]float64 {
 	latentLengths := make([]int64, len(wavLengths))
 	maxLen := int64(0)
 	for i, wavLen := range wavLengths {
+		// Ensure minimum latent length of 1 to prevent words from being skipped
+		// when duration prediction is very short
 		latentLengths[i] = (wavLen + latentSize - 1) / latentSize
+		if latentLengths[i] < 1 {
+			latentLengths[i] = 1
+		}
 		if latentLengths[i] > maxLen {
 			maxLen = latentLengths[i]
 		}
